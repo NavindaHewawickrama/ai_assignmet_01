@@ -1,8 +1,11 @@
-# from sklearn.datasets import load_diabetes
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+from sklearn import datasets
 
 
-######this is the code that i did in the beginning#####
+
+
+
+######this is the code that i did in the beginning for question 01 #####
 #diabetes = load_diabetes()
 #print(diabetes.target[:])
 #print(diabetes)
@@ -22,11 +25,11 @@
 # plt.show()
 
 
-#######assesment provided code##############
 
-from sklearn import datasets
-from sklearn.linear_model import LinearRegression
-import matplotlib.pyplot as plt
+
+####### assesment provided code for question 1 ##############
+
+
 
 #load the data
 #inspec the data
@@ -50,3 +53,5 @@ ax [1].grid ( True )
 plt.tight_layout ()
 plt.savefig (" DiabetesTargetAndTwoInputs .jpg")
 plt.show()
+
+
