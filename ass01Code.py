@@ -9,6 +9,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import Ridge
 import pandas as pd
 import numpy as np
+from sklearn.linear_model import Lasso
+
 
 
 #explore the plot commands
@@ -59,4 +61,26 @@ fig , ax = plt . subplots ( nrows =1 , ncols =2 , figsize =(8 ,4) )
 ax [0].bar(np.arange(len(w)),w)
 ax [1].bar(np.arange(len(wR)),wR)
 plt . savefig (" LeastSquaresAndRegularizedWeights .jpg")
+plt.show()
+
+#numerical comparison between methods - prompt : give me a comparision between the two mthods
+print("R² (sklearn):", r2_score(t, th1))
+print("R² (pseudo-inverse):", r2_score(t, th2))
+print("R² (regularized):", r2_score(t, X @ wR))
+
+
+############## question 03 ####################
+ll = Lasso ( alpha =0.2)
+ll.fit (X , t )
+###getting the weights of the lasso
+lasW = ll.coef_
+th_lasso = ll.predict ( X )
+
+fig , ax = plt.subplots ( nrows =1 , ncols =3 , figsize =(15 ,4) )
+ax[0].bar(np.arange (len ( w ) ) , w )
+ax[1].bar(np.arange(len(wR)),wR)
+ax[2].bar(np.arange(len(lasW)),lasW)
+print("R² (Lasso):", r2_score(t, th_lasso))
+
+plt . savefig (" solutions .png")
 plt.show()
