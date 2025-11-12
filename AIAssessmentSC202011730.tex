@@ -1,0 +1,291 @@
+%  INTERIM REPORT TEMPLATE (XeLaTeX)
+
+\documentclass[12pt,a4paper]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{csquotes}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}
+
+%---- Headers/footers (page numbers) ----%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}                    % clear header/footer
+\fancyfoot[C]{\thepage}      % page number centered in footer
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+%---- Heading formatting (Header 1 & 2) ----%
+% Header 1 (Chapter-level): 14pt, bold
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+  {-3.5ex \@plus-1ex \@minus-.2ex}%
+  {2.3ex \@plus.2ex}%
+  {\normalfont\large\bfseries}}
+\makeatother
+% Header 2 (subsection): 12pt, bold
+\makeatletter
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+  {-3.25ex\@plus-1ex \@minus-.2ex}%
+  {1.5ex \@plus.2ex}%
+  {\normalfont\normalsize\bfseries}}
+\makeatother
+
+%---- User macros (fill these once) ----%
+\newcommand{\CourseCodeNumber}{CSC4242}
+\newcommand{\ProjectTitle}{Artificial Intelligence - Assignment 01}
+\newcommand{\StudentName}{Navinda Hewawickrama}
+\newcommand{\RegistrationNumber}{SC/2020/11730} % <-- change this
+\newcommand{\SubmissionDate}{November 2025}
+\newcommand{\CoverImagePath}{RUHUNAPNG} 
+
+\begin{document}
+%======================%
+%  COVER PAGE
+%======================%
+\begin{titlepage}
+  \thispagestyle{empty} 
+  \begin{center}
+    \vspace*{10mm}
+    {\Large \textbf{\CourseCodeNumber}}\\[6mm]
+    \includegraphics[width=0.5\textwidth]{\CoverImagePath}\\[10mm]
+    
+    {\Large \textbf{\ProjectTitle}}\\[10mm]
+
+    % Cover image (optional). Replace width as you like.
+    
+
+    \textbf{Registration No.:} \RegistrationNumber\\[2mm]
+    \textbf{Student Name:} \StudentName\\[6mm]
+
+    \SubmissionDate\\[12mm]
+
+    \vfill
+    \textbf{Bachelor of Computer Science (Special) Degree}\\
+    Department of Computer Science, University of Ruhuna
+  \end{center}
+\end{titlepage}
+
+
+% start page numbering from here
+\clearpage
+\pagenumbering{arabic}
+
+%======================%
+%  CONTENT OF THE REPORT
+%======================%
+\textbf{Declaration:
+I acknowledge the use of Chatgpt to generate contents of the result code parts of the assignment
+}
+%--- Chapter 1 ---%
+\section{Introduction}
+The main purpose of doing this assignment was to learn about core regression techniques in Artificial Intelligence (AI), including Linear Regression, Regularized Regression (Ridge/Tikhonov), and Lasso Regression. From each task, step by step, we learn and understand how regression models learn from data, how they generalise to unseen data samples, and how the regularisation prevents the overfitting issue by penalising large weights. We use two datasets: the Diabetes dataset, which is a synthetic dataset, and a real-world dataset like the Huuskonen Solubility dataset.
+
+By using Python, we implemented different regression models, visualised their behaviour, and interpreted the different roles of regularisation parameters. The last part of the assignment focuses on using the learnt methods in the assignment for predicting the aqueous solubility of chemical compounds based on molecular descriptors, which shows about AI in computationalchemistry.
+
+\section{Linear Least Squares Regression}
+\subsection{Objective}
+The first task was given to understand the basic principles of Linear Least Squares Regression using the diabetes dataset from the \texttt{sklearn.datasets} library. Modelling the relationship between different features (e.g., BMI, blood pressure, etc.) and a target variable representing a diabetes progression metric, was the goal.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imageOne.PNG}
+  \caption{Histogram of Target Values and Scatter Plot of Selected Features}
+\end{figure}
+
+\subsection{Implementation}
+We implemented the regression model in two ways.
+\begin{itemize}
+  \item Using the \texttt{LinearRegression} class from the \texttt{scikit-learn} library.
+  \item Using the analytical solution taken from the pseudo-inverse formula
+  \[
+  w = (X^TX)^{-1}X^Tt
+  \]
+  where $X$ is the feature matrix and $t$ is the target vector.
+\end{itemize}
+In the comparision between the two mthods we see identical predictions, showing that the analytical solution is correct. The scatter plots between the predicted and the actual values demonstrate a relationship near to a linear one, which actually indicates a good model fit (Figure 2).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imageTwo.PNG}
+  \caption{Linear regression in the dataset using two methods}
+\end{figure}
+
+\subsection{Discussion}
+We can see that the linear regression actually estimate the coefficients by minimizing the mean squared error (MSE). The optimal weight vecttor is actually computed correctly by the psuedo inverse method, while \texttt{scikit-learn}'s method of implementation uses efficient numerical solvers. When the data matrix $X$ has full column rank, both methods actially yield the same coefficients and $R^2$ values. 
+
+\section{Regularization (Ridge/Tikhonov)}
+
+\subsection{Objective}
+To control the complexity of the model and to stop the overfitting, regularization actually introduces a penalty term. The Tikhonov (Ridge) regularization modifies the least squares loss function as given below.
+\[
+\min_w \|t - Xw\|^2_2 + \gamma \|w\|^2_2
+\]
+
+Here  $\gamma$ is the regularization parameter that actually controls the strength of penalization.
+
+\subsection{Implementation}
+The regularized weights are actually computed using:
+\[
+w_R = (X^TX + \gamma I)^{-1} X^Tt
+\]
+We can compare the magnitudes of the coefficients taken from the standard and regularized regression. By looking at the two plots we can visualize the effect of regularization. Bar plots of $w$ and $w_R$ show that Ridge regression reduces coefficient variance significantly when compared to the other.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imageThree.PNG}
+  \caption{omparison of Weight Magnitudes Before and After Regularization (Least Squares vs Tikhonov)}
+\end{figure}
+\subsection{Observations}
+In these bar grpahs we can see that as $\gamma$ increases, weights shrink towards zero, reducing model variance but slightly increasing the bias. Due to this trade-off, generalization improves, where the feature are correlated or when there is noise in the dataset.
+
+\section{Regularization Path and Lasso Regression}
+
+\subsection{Objective}
+In this section we examine how coefficients evolve when the regularization strength $\alpha$ changes in Lasso, LARS, and Elastic Net regressions. The \texttt{lasso\_path}, \texttt{lars\_path}, and \texttt{enet\_path} functions from \texttt{scikit-learn} are used to compute these paths.
+
+\subsection{Implementation}
+The code for this section was adapted from the official Scikit-learn example titled \textit{“Lasso and Elastic-Net Regularization Paths”}. The implementation computes the evolution of regression coefficients for multiple algorithms (Lasso, LARS, and Elastic Net) as the regularization parameter $\alpha$ changes.
+
+The dataset used is the diabetes dataset, standardized before fitting to ensure comparable scaling across features. Each model computes a \textbf{regularization path}, which shows how each coefficient transitions from zero (strong regularization) to its final fitted value (weak regularization). This provides valuable insight into the model’s feature selection behaviour.
+
+The full reference implementation can be accessed at:
+\begin{quote}
+\url{https://scikit-learn.org/stable/auto_examples/linear_model/plot_lasso_lasso_lars_elasticnet_path.html}
+\end{quote}
+
+\subsection{Results}
+For Lasso, LARS, and Elastic Net, plots of coefficients trajectories (Regularization Paths) are generated. The evolution of the coefficients as $\alpha$ decreases is represented by each line. The coefficients become non-zero, as $\alpha$ becomes smaller, which leads to more complex models.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{lassoImage1.PNG}
+  \caption{Lasson and Lars Path}
+\end{figure}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{lassoimage2.PNG}
+  \caption{Lasso and Elastic Net Path}
+\end{figure}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{lassoimage3.PNG}
+  \caption{Lasso Regularization path}
+\end{figure}
+
+
+\subsection{Interpretation}
+The real ability of lasso is highlighted with its strong regularization, where most coefficients are driven to zero and also shows its ability to perform feature selection. Elastic net, which combines L1 and L2 penalties, shows a smoother transition. Elastic net often retain correlated features together.
+
+\section{Comparison Between Ridge and Lasso}
+When we compare ridge and lasso regressions we can see that ridge tends to shrink all coefficients equally, while lasso drives many coefficients exactly to zero, resulting in a sparse model. This is very risky when it comes to high dimensional data as it helps to identify the most important and relevant features that actually contributes to the predictions.
+
+Wen looking at them we can see that ridge actually minimizes the variance more effectively, but lasso enhances the interpretability by selecting the important features.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imageFive.PNG}
+  \caption{Comparing the effect of regularization with lasso}
+\end{figure}
+
+\section{Solubility Prediction of Chemical Compounds}
+
+\subsection{Objective}
+In the final taks, the use of regressive techniques to estimate the aqueous solubility of chemical compounds with the help of the Huuskonen Solubility dataset is performed. A large set of molecular descriptors that encapsulates physicochemical properties in each compound has been used to represent that compound in the dataset.
+
+\subsection{Data Preparation}
+The dataset was preprocessed by:
+\begin{itemize}
+  \item Removing the first five columns that has no numeric data.
+  \item Selecting descriptors that has only numbers.
+  \item Dropping missing values.
+  \item Splitting the data into 80\% training and 20\% testing subsets.
+\end{itemize}
+
+A histogram of the dataset values shows a near-normal distribution centered around zero, indicating balanced solubility ranges in the dataset.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imageSeven.PNG}
+  \caption{distribution of the logs}
+\end{figure}
+
+\subsection{Regularized Regression (Ridge)}
+A Ridge regression model, as we did earlier, was implemented using:
+\[
+w = (X^TX + \gamma I)^{-1}X^Tt
+\]
+where gamma was 2.3. The plots show both the training and the testing set data. They both show a strong correlation between predicted and actual solubility values. The model actually captures the linear relationship between them while avoiding being overfit to the training dataset.
+
+\subsection{Lasso Regression and Feature Selection}
+By using various alpha ($\alpha$) values  the lasso model tested to explore the sparsity and the capabilities of feature selction. The model's test error (MSE) and number of non zero coefficients were noted and tow plots were generated.
+\begin{itemize}
+  \item Test MSE vs Regularization Strength ($\alpha$)
+  \item Number of Non-Zero Coefficients vs $\alpha$
+\end{itemize}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imageEight.PNG}
+  \caption{Lasso Regression and Feature Selection}
+\end{figure}
+In the results we can see that small values of $\alpha$ yield better accuracy but they include many features. Compared to them, larger $\alpha$ values lead to sparse models with a little bit of reduced performance.
+
+The top ten molecular descriptors of the Lasso model with the best performance were selected as most significant in the prediction of solubility. Re-training the model with these top ten features alone gave a similar value of the $R2$ label as the full Ridge model, which shows that even a small set of descriptors can include most of the predictive information.
+
+\subsection{Discussion and Comparison}
+The final prediction question demonstrate how regularization improves the robust qualities of linear models on high-dimensional chemical data. Stability, low variance estimates are shown in ridge regression while lasso helps to identify key molecular features. 
+
+Compared with the findings of Huuskonen (1998) and Pirashvili et al. (2018), our linear models achieve moderate performance ($R^2 \approx 0.75$), whereas neural network and ensemble methods reported in literature reach around $R^2 = 0.9$. Despite all of these results, for future studies in cheminformatics, the interpretability and efficiency of linear models make them valuable for exploratoryanalysis.
+
+\section{Conclusion}
+This assignment provided a prictical and hands-on understanding of regression techniques actually work and their significance. Through step by step learning we observed how:
+\begin{itemize}
+  \item Linear regression models data relationships through least squares fitting.
+  \item Regularization reduces overfitting and enhances model generalization.
+  \item Lasso regression performs feature selection and simplifies models.
+  \item Ridge regression stabilizes solutions in the presence of multicollinearity.
+  \item In real-world data such as solubility prediction, these methods provide interpretable baselines for complex models.
+\end{itemize}
+
+The experiments strengthened theoretical ideas of Artificial Intelligence and Machine Learning through the association of the mathematical derivations with the data-driven outcomes.
+
+\clearpage
+\appendix
+\section*{Appendix}
+
+\addcontentsline{toc}{section}{Appendix}
+
+
+\subsection*{A. Source Code for Experiments}
+All scripts were executed using Python~3.10 and \texttt{scikit-learn}, \texttt{NumPy}, and \texttt{Matplotlib} libraries.The full source code and experiment results are available in the interactive Google Colab notebook at:
+
+\begin{quote}
+\url{https://colab.research.google.com/drive/1ki_F14NMSntGXAdEH74MdEY3hNxhX4RR?usp=sharing}
+\end{quote}
+
+\subsection*{B. Non AI references}
+\begin{itemize}
+  \item \url{https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_diabetes.html }
+  \item \url{https://www.geeksforgeeks.org/data-visualization/plotting-histogram-in-python-using-matplotlib/}
+  \item \url{https://www.w3schools.com/python/matplotlib_histograms.asp}
+  \item \url{https://taylorandfrancis.com/knowledge/Engineering_and_technology/Engineering_support_and_special_topics/Tikhonov_regularization/}
+  \item \url{https://en.wikipedia.org/wiki/Ridge_regression}
+  \item \url{https://www.dataquest.io/blog/regularization-in-machine-learning/}
+  \item \url{https://youtu.be/21TgKhy1GY4?si=l04mvRksj-nzHpv2}
+  \item \url{https://www.geeksforgeeks.org/machine-learning/regularization-in-machine-learning/}
+  \item \url{https://scikit-learn.org/stable/auto_examples/linear_model/plot_lasso_lasso_lars_elasticnet_path.html}
+  \item \url{https://youtu.be/LmpBt0tenJE}
+\end{itemize}
+
+\subsection*{C. Dataset Reference}
+
+Huuskonen, J. (1998). \textit{Estimation of Aqueous Solubility of Organic Compounds Based on Molecular Structure.} 
+\textit{Journal of Chemical Information and Computer Sciences}, 40(3), 773–777.
+
+Pirashvili, K., et al. (2018). \textit{Machine Learning Approaches for Solubility Prediction.} 
+\textit{Computational and Structural Biotechnology Journal}, 16, 104–113.
+
+
+
+
+
+\end{document}
